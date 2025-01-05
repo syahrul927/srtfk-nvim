@@ -162,29 +162,12 @@ return { -- LSP Configuration & Plugins
 
 		-- Enable the following language servers
 		local servers = {
-			-- jdtls = {
-			-- 	filetypes = { "java" },
-			-- 	cmd = {
-			-- 		"java",
-			-- 		"-javaagent:" .. vim.fn.expand("~/.local/share/java/lombok.jar"), -- Add Lombok agent
-			-- 		"-Xms1g", -- Minimum heap size
-			-- 		"-Xmx3g", -- Maximum heap size
-			-- 		"-Djava.version=8", -- Ensure Java 8 compatibility
-			-- 		"-jar",
-			-- 		vim.fn.expand(
-			-- 			"~/.local/share/nvim/mason/share/jdtls/plugins/org.eclipse.equinox.launcher_1.6.900.v20240613-2009.jar"
-			-- 		),
-			-- 		"-configuration",
-			-- 		vim.fn.expand("~/.local/share/nvim/mason/share/jdtls/config"),
-			-- 		"-data",
-			-- 		vim.fn.stdpath("data") .. "/jdtls/workspace",
-			-- 	},
-			-- },
 			html = { filetypes = { "html", "twig", "hbs" } },
 			-- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
 			ts_ls = {
 				filetypes = { "typescript", "typescriptreact", "javascript" },
 			},
+			angularls = {},
 			prismals = {},
 			lua_ls = {
 				-- cmd = {...},
