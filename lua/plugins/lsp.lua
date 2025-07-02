@@ -26,6 +26,7 @@ return { -- LSP Configuration & Plugins
 		},
 	},
 	config = function()
+		require("plugins.lsp-log").setup()
 		vim.api.nvim_create_autocmd("LspAttach", {
 			group = vim.api.nvim_create_augroup("lsp-attach", { clear = true }),
 			-- Create a function that lets us more easily define mappings specific LSP related items.
@@ -37,34 +38,6 @@ return { -- LSP Configuration & Plugins
 
 				local bufnr = event.buf
 
-				local function go_to_implementation()
-					local lsp = vim.lsp
-
-					-- Request implementations from the LSP server
-					lsp.buf_request(
-						0, -- Current buffer
-						"textDocument/implementation",
-						lsp.util.make_position_params(),
-						function(err, result)
-							if err then
-								vim.notify("Error fetching implementations: " .. err.message, vim.log.levels.ERROR)
-								return
-							end
-
-							if not result or vim.tbl_isempty(result) then
-								vim.notify("No implementations found", vim.log.levels.INFO)
-								return
-							end
-
-							if #result == 1 then
-								-- Jump directly to the implementation if only one result
-								lsp.util.jump_to_location(result[1])
-							else
-								require("lspsaga.finder"):new({ "imp" })
-							end
-						end
-					)
-				end
 				local organize_imports_map = {
 					ts_ls = function()
 						local params = {
@@ -112,16 +85,30 @@ return { -- LSP Configuration & Plugins
 						print("No supported LSP client for organizing imports: " .. client.name)
 					end
 				end, { buffer = bufnr, desc = "Organize Imports" })
-				--lspsaga
-				map("gh", "<cmd>Lspsaga finder ref<CR>", "Find references")
+
+				-- keymap telescope
+				local builtin = require("telescope.builtin")
+				map("gi", builtin.lsp_implementations, "Goto Implementation")
+				map("gh", builtin.lsp_references, "Find references")
 				map("gr", "<cmd>Lspsaga rename<CR>", "Rename")
 				map("gp", "<cmd>Lspsaga peek_definition<CR>", "Peek Definition")
-				map("gi", go_to_implementation, "Goto Implementation")
-				map("gd", "<cmd>Lspsaga goto_definition<CR>", "Goto Definition")
-				map("gD", "<cmd>Lspsaga goto_type_definition<CR>", "Goto Type Definition")
+				map("gd", builtin.lsp_definitions, "Goto Definition")
+				map("gD", builtin.lsp_type_definitions, "Goto Type Definition")
 				map("K", "<cmd>Lspsaga hover_doc<cr>", "Hover Document")
 				map("<leader>ca", "<cmd>Lspsaga code_action<CR>", "Code Action")
 				map("<leader>o", "<cmd>Lspsaga outline<CR>", "Outline")
+
+				--lspsaga
+				-- map("gh", "<cmd>Lspsaga finder ref<CR>", "Find references")
+				-- map("gr", "<cmd>Lspsaga rename<CR>", "Rename")
+				-- map("gp", "<cmd>Lspsaga peek_definition<CR>", "Peek Definition")
+				-- map("gi", go_to_implementation, "Goto Implementation")
+				-- map("gd", "<cmd>Lspsaga goto_definition<CR>", "Goto Definition")
+				-- map("gD", "<cmd>Lspsaga goto_type_definition<CR>", "Goto Type Definition")
+				-- map("K", "<cmd>Lspsaga hover_doc<cr>", "Hover Document")
+				-- map("<leader>ca", "<cmd>Lspsaga code_action<CR>", "Code Action")
+				-- map("<leader>o", "<cmd>Lspsaga outline<CR>", "Outline")
+
 				map("<leader>ds", require("telescope.builtin").lsp_document_symbols, "[D]ocument [S]ymbols")
 				map("<leader>ws", require("telescope.builtin").lsp_dynamic_workspace_symbols, "[W]orkspace [S]ymbols")
 				map("<leader>wa", vim.lsp.buf.add_workspace_folder, "[W]orkspace [A]dd Folder")
@@ -141,6 +128,18 @@ return { -- LSP Configuration & Plugins
 					"<cmd>lua vim.diagnostic.goto_prev({severity = vim.diagnostic.severity.ERROR})<CR>",
 					"Goto Prev Error"
 				)
+
+				local noice = require("notify")
+
+				-- Function to get and display session path
+				local function show_session_path()
+					local session_path = vim.fn.expand("~/.local/share/nvim/sessions/")
+					-- You can change the path to where your sessions are stored if it's different
+					noice("Current session path: " .. session_path, "info", { title = "Session Path" })
+				end
+
+				-- Call the function
+				map("<leader>sa", show_session_path, "showing path session")
 
 				local client = vim.lsp.get_client_by_id(event.data.client_id)
 				if client and client.server_capabilities.documentHighlightProvider then
@@ -162,10 +161,21 @@ return { -- LSP Configuration & Plugins
 
 		-- Enable the following language servers
 		local servers = {
+			astro = {
+				filetypes = { "astro" },
+			},
 			html = { filetypes = { "html", "twig", "hbs" } },
 			-- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
 			ts_ls = {
 				filetypes = { "typescript", "typescriptreact", "javascript" },
+				settings = {
+					preferences = {
+						importModuleSpecifierPreference = "non-relative",
+					},
+					completions = {
+						completeFunctionCalls = false,
+					},
+				},
 			},
 			angularls = {},
 			prismals = {},
@@ -276,8 +286,6 @@ return { -- LSP Configuration & Plugins
 			bashls = {},
 			graphql = {},
 			cssls = {},
-			ltex = {},
-			texlab = {},
 		}
 
 		-- Ensure the servers and tools above are installed

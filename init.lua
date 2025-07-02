@@ -17,7 +17,7 @@ end
 vim.opt.rtp:prepend(lazypath)
 
 -- Import color theme based on environment variable NVIM_THEME
-local default_color_scheme = "tokyo"
+local default_color_scheme = "github"
 local env_var_nvim_theme = os.getenv("NVIM_THEME") or default_color_scheme
 
 -- Define a table of theme modules
@@ -25,6 +25,11 @@ local themes = {
 	nord = "plugins.themes.nord",
 	onedark = "plugins.themes.onedark",
 	tokyo = "plugins.themes.tokyo",
+	kanagawa = "plugins.themes.kanagawa",
+	vercel = "plugins.themes.vercel",
+	rosepine = "plugins.themes.rosepine",
+	noirbuddy = "plugins.themes.noirbuddy",
+	github = "plugins.themes.github",
 }
 
 -- Setup plugins
@@ -36,10 +41,10 @@ require("lazy").setup({
 	require("plugins.autocompletion"),
 	require("plugins.none-ls"),
 	require("plugins.lualine"),
-	require("plugins.bufferline"),
+	-- require("plugins.bufferline"),
 	require("plugins.neo-tree"),
 	require("plugins.alpha"),
-	require("plugins.indent-blankline"),
+	-- require("plugins.indent-blankline"),
 	require("plugins.lazygit"),
 	require("plugins.comment"),
 	require("plugins.debug"),
@@ -51,11 +56,14 @@ require("lazy").setup({
 	-- require 'plugins.chatgpt',
 	require("plugins.aerial"),
 	require("plugins.vim-tmux-navigator"),
-	require("plugins.auto-pairs"),
+	-- require("plugins.auto-pairs"),
 	require("plugins.auto-tag"),
 	require("plugins.lsp.jdtls"),
 	require("plugins.lsp-saga"),
-	require("plugins.git-blame"),
+	require("plugins.incline"),
+	require("plugins.noice"),
+	-- require("plugins.git-blame"),
+	require("plugins.nvim-lens"),
 }, {
 	ui = {
 		-- If you have a Nerd Font, set icons to an empty table which will use the

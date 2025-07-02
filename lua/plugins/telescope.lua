@@ -20,13 +20,22 @@ return {
 		"nvim-tree/nvim-web-devicons",
 	},
 	config = function()
-		local telescope = require("telescope")
 		local actions = require("telescope.actions")
 		local builtin = require("telescope.builtin")
 
 		require("telescope").setup({
 			defaults = {
-				path_display = { "truncate" },
+				path_display = { truncate = "2" },
+				layout_strategy = "horizontal",
+				layout_config = {
+					horizontal = {
+						preview_width = 0.55, -- Adjust this value to set the preview area's width
+						prompt_position = "bottom", -- Optional: Position the prompt at the top
+					},
+					width = 0.9, -- Overall width of Telescope window
+					height = 0.9, -- Overall height of Telescope window
+					preview_cutoff = 120,
+				},
 				mappings = {
 					i = {
 						["<C-k>"] = actions.move_selection_previous, -- move to prev result
@@ -44,7 +53,7 @@ return {
 					hidden = true,
 				},
 				buffers = {
-					initial_mode = "normal",
+					initial_mode = "insert",
 					sort_lastused = true,
 					-- sort_mru = true,
 					mappings = {
@@ -87,7 +96,7 @@ return {
 		vim.keymap.set("n", "<leader>sh", builtin.help_tags, { desc = "[S]earch [H]elp" })
 		vim.keymap.set("n", ";w", builtin.grep_string, { desc = "[S]earch current [W]ord" })
 		vim.keymap.set("n", ";g", builtin.live_grep, { desc = "[S]earch by [G]rep" })
-		vim.keymap.set("n", "<leader>sd", builtin.diagnostics, { desc = "[S]earch [D]iagnostics" })
+		vim.keymap.set("n", ";d", builtin.diagnostics, { desc = "[S]earch [D]iagnostics" })
 		vim.keymap.set("n", "<leader>sr", builtin.resume, { desc = "[S]earch [R]resume" })
 		vim.keymap.set("n", "<leader>s.", builtin.oldfiles, { desc = '[S]earch Recent Files ("." for repeat)' })
 		vim.keymap.set("n", "<leader>sds", function()

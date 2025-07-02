@@ -12,16 +12,16 @@ local project_name = vim.fn.fnamemodify(vim.fn.getcwd(), ":p:h:t")
 local workspace_dir = vim.fn.stdpath("data") .. "/site/java/workspace-root/" .. project_name
 
 local on_attach = function(client, bufnr)
-	local function buf_set_keymap(...)
-		vim.api.nvim_buf_set_keymap(bufnr, ...)
-	end
-
 	local function buf_set_option(...)
 		vim.api.nvim_buf_set_option(bufnr, ...)
 	end
 
 	-- Enable completion triggered by <c-x><c-o>
 	buf_set_option("omnifunc", "v:lua.vim.lsp.omnifunc")
+
+	-- Ensure we use the global handlers for progress messages
+	client.server_capabilities.window = client.server_capabilities.window or {}
+	client.server_capabilities.window.workDoneProgress = true
 
 	-- Mappings.
 	local opts = { noremap = true, silent = true }
@@ -66,8 +66,8 @@ local config = {
 		"-Declipse.application=org.eclipse.jdt.ls.core.id1",
 		"-Dosgi.bundles.defaultStartLevel=4",
 		"-Declipse.product=org.eclipse.jdt.ls.core.product",
-		"-Dlog.protocol=true",
-		"-Dlog.level=ALL",
+		"-Dlog.protocol=false",
+		"-Dlog.level=WARNING",
 		"-javaagent:" .. lombok_dir,
 		"-Xms3g",
 		"--add-modules=ALL-SYSTEM",
@@ -104,9 +104,10 @@ local config = {
 	settings = {
 		java = {
 			format = {
+
 				enabled = true,
 				settings = {
-					url = vim.fn.stdpath("config") .. "/lang-servers/intellij-java-google-style.xml",
+					url = vim.fn.stdpath("config") .. "/lang-servers/eclipse-java-google-style.xml",
 					profile = "GoogleStyle",
 				},
 			},

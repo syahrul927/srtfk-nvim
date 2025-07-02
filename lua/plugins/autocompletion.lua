@@ -67,15 +67,17 @@ return { -- Autocompletion
 		cmp.setup({
 			preselect = cmp.PreselectMode.Item, -- Make sure the first item is preselected when showing the completion menu
 			window = {
-				completion = {
-					border = "rounded", -- Optional: Add rounded borders
-					-- winhighlight = "Normal:CmpNormal,FloatBorder:CmpBorder,CursorLine:CmpCursorLine,Search:None",
-					col_offset = 3,
-					side_padding = 0,
-				},
-				documentation = {
-					border = "rounded", -- Optional: Add rounded borders for documentation
-				},
+				completion = cmp.config.window.bordered(),
+				documentation = cmp.config.window.bordered(),
+				-- completion = {
+				-- 	border = "rounded", -- Optional: Add rounded borders
+				-- 	-- winhighlight = "Normal:CmpNormal,FloatBorder:CmpBorder,CursorLine:CmpCursorLine,Search:None",
+				-- 	col_offset = 3,
+				-- 	side_padding = 0,
+				-- },
+				-- documentation = {
+				-- 	border = "rounded", -- Optional: Add rounded borders for documentation
+				-- },
 			},
 			snippet = {
 				expand = function(args)
