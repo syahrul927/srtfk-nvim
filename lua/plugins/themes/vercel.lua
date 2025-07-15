@@ -1,7 +1,7 @@
 return {
     "tiesen243/vercel.nvim",
-    lazy = false,
-    priority = 1000,
+    lazy = true, -- disabled to use github theme as main
+    -- priority = 1000, -- disabled
     config = function()
         require("vercel").setup({
             theme = "dark",        -- String: Sets the theme to light or dark (Default: light)

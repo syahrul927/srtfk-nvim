@@ -1,5 +1,6 @@
 return {
 	"rebelot/kanagawa.nvim",
+	lazy = true, -- disabled to use github theme as main
 
 	config = function()
 		local config = {

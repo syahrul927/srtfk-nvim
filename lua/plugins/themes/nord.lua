@@ -1,7 +1,7 @@
 return {
 	"shaunsingh/nord.nvim",
-	lazy = false, -- make sure we load this during startup if it is your main colorscheme
-	priority = 1000, -- make sure to load this before all the other start plugins
+	lazy = true, -- disabled to use github theme as main
+	-- priority = 1000, -- disabled
 	config = function()
 		-- Example config in lua
 		vim.g.nord_contrast = true -- Make sidebars and popup menus like nvim-tree and telescope have a different background
