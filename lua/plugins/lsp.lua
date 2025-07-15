@@ -311,6 +311,25 @@ return { -- LSP Configuration & Plugins
 					-- certain features of an LSP (for example, turning off formatting for tsserver)
 					server.capabilities = vim.tbl_deep_extend("force", {}, capabilities, server.capabilities or {})
 
+					-- Java-specific performance optimizations
+					if server_name == "java" or server_name == "jdtls" then
+						-- Reduce LSP request frequency for Java
+						server.flags = server.flags or {}
+						server.flags.debounce_text_changes = 500  -- Increase debounce for Java files
+						
+						-- Optimize capabilities for Java
+						if server.capabilities then
+							server.capabilities.textDocument = server.capabilities.textDocument or {}
+							server.capabilities.textDocument.completion = server.capabilities.textDocument.completion or {}
+							server.capabilities.textDocument.completion.completionItem = {
+								snippetSupport = true,
+								resolveSupport = {
+									properties = { "documentation", "detail" }  -- Reduce resolve properties
+								}
+							}
+						end
+					end
+
 					require("lspconfig")[server_name].setup(server)
 				end,
 			},

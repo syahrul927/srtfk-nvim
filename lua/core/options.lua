@@ -8,8 +8,11 @@ vim.o.undofile = true                                 -- Save undo history
 vim.o.ignorecase = true                               -- Case-insensitive searching UNLESS \C or capital in search
 vim.o.smartcase = true                                -- smart case
 vim.wo.signcolumn = "yes"                             -- Keep signcolumn on by default
-vim.o.updatetime = 250                                -- Decrease update time
+vim.o.updatetime = 100                                -- Decrease update time for better LSP responsiveness
 vim.o.timeoutlen = 300                                -- time to wait for a mapped sequence to complete (in milliseconds)
+-- LSP Performance optimizations
+vim.g.lsp_zero_extend_cmp = 0                          -- Disable unnecessary LSP extensions
+vim.g.lsp_zero_extend_lspconfig = 0                    -- Disable unnecessary LSP config extensions
 vim.o.backup = false                                  -- creates a backup file
 vim.o.writebackup = false                             -- if a file is being edited by another program (or was written to file while editing with another program), it is not allowed to be edited
 vim.o.completeopt = "menuone,noselect"                -- Set completeopt to have a better completion experience

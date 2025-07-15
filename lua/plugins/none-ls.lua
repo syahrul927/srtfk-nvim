@@ -36,6 +36,7 @@ return {
 					"typescriptreact",
 					"javascript",
 					"prisma",
+					-- Note: Java formatting is handled by LSP for better performance
 				},
 			}),
 			formatting.stylua,

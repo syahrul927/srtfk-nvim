@@ -69,31 +69,41 @@ local config = {
 		"-Dlog.protocol=false",
 		"-Dlog.level=WARNING",
 		"-javaagent:" .. lombok_dir,
-		"-Xms3g",
+		-- Memory and Performance Optimizations
+		"-Xms2g",                                    -- Initial heap size (reduced from 3g for faster startup)
+		"-Xmx8g",                                    -- Maximum heap size (adjust based on your system RAM)
+		"-XX:+UseG1GC",                              -- Use G1 garbage collector for better performance
+		"-XX:+UseStringDeduplication",               -- Reduce memory usage by deduplicating strings
+		"-XX:MaxGCPauseMillis=200",                  -- Target max GC pause time
+		"-Djava.awt.headless=true",                  -- Headless mode for better performance
+		"-Dfile.encoding=UTF-8",                     -- Explicit encoding
+		"-XX:+TieredCompilation",                    -- Enable tiered compilation
+		"-XX:TieredStopAtLevel=4",                   -- Use highest tier compilation
+		"-XX:+UseCompressedOops",                    -- Use compressed object pointers for memory efficiency
+		"-XX:+UseCompressedClassPointers",           -- Use compressed class pointers
+		"-XX:ReservedCodeCacheSize=512m",            -- Increase code cache for better JIT performance
 		"--add-modules=ALL-SYSTEM",
 		"--add-opens",
 		"java.base/java.util=ALL-UNNAMED",
 		"--add-opens",
 		"java.base/java.lang=ALL-UNNAMED",
+		"--add-opens",
+		"java.base/java.io=ALL-UNNAMED",
+		"--add-opens",
+		"java.base/java.nio=ALL-UNNAMED",
 		"-jar",
 		path_to_jar,
-		-- ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^                                       ^^^^^^^^^^^^^^
-		-- Must point to the                                                     Change this to
-		-- eclipse.jdt.ls installation                                           the actual version
-		-- 💀
+		-- Must point to the eclipse.jdt.ls installation
 		"-configuration",
 		config_dir,
-		-- ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^        ^^^^^^
-		-- Must point to the                      Change to one of `linux`, `win` or `mac`
-		-- eclipse.jdt.ls installation            Depending on your system.
-		-- 💀
+		-- Must point to the eclipse.jdt.ls installation
+		-- Change to one of `linux`, `win` or `mac` depending on your system.
 		-- See `data directory configuration` section in the README
 		"-data",
 		workspace_dir,
 	},
 	-- on attach add function keymap
 	on_attach = on_attach,
-	-- 💀
 	-- This is the default if not provided, you can remove it. Or adjust as needed.
 	-- One dedicated LSP server & client will be started per unique root_dir
 	-- root_dir = root_dir,
@@ -103,14 +113,82 @@ local config = {
 	-- for a list of options
 	settings = {
 		java = {
+			-- Performance optimizations
+			autobuild = { enabled = false },                    -- Disable auto-build for better performance
+			maxConcurrentBuilds = 2,                           -- Limit concurrent builds
+			
+			-- Code completion optimizations
+			completion = {
+				maxResults = 50,                               -- Limit completion results
+				enabled = true,
+				guessMethodArguments = false,                  -- Disable argument guessing for speed
+				favoriteStaticMembers = {
+					"org.junit.Assert.*",
+					"org.junit.Assume.*",
+					"org.junit.jupiter.api.Assertions.*",
+					"org.junit.jupiter.api.Assumptions.*",
+					"org.junit.jupiter.api.DynamicContainer.*",
+					"org.junit.jupiter.api.DynamicTest.*",
+					"org.mockito.Mockito.*",
+					"org.mockito.ArgumentMatchers.*",
+				},
+			},
+			
+			-- Import optimizations
+			imports = {
+				gradle = { enabled = false },                  -- Disable gradle imports if not needed
+				maven = { enabled = true },
+				includeDecompiledSources = false,              -- Faster startup
+			},
+			
+			-- Format settings
 			format = {
-
 				enabled = true,
 				settings = {
 					url = vim.fn.stdpath("config") .. "/lang-servers/eclipse-java-google-style.xml",
 					profile = "GoogleStyle",
 				},
 			},
+			
+			-- Disable resource filters for better performance
+			eclipse = {
+				downloadSources = false,                       -- Don't auto-download sources
+			},
+			
+			-- Maven settings
+			maven = {
+				downloadSources = false,                       -- Don't auto-download sources
+				updateSnapshots = false,                       -- Don't auto-update snapshots
+			},
+			
+			-- References and implementations
+			references = {
+				includeDecompiledSources = false,              -- Faster reference search
+			},
+			
+			-- Signature help optimization
+			signatureHelp = {
+				enabled = true,
+				description = { enabled = false },             -- Disable descriptions for speed
+			},
+			
+			-- Content provider optimizations
+			contentProvider = {
+				preferred = "fernflower",                      -- Faster decompiler
+			},
+			
+			-- Sources organization
+			sources = {
+				organizeImports = {
+					starThreshold = 99,                        -- Reduce star imports
+					staticStarThreshold = 99,
+				},
+			},
+			
+			-- Disable unnecessary features
+			implementationsCodeLens = { enabled = false },     -- Disable code lens for performance
+			referencesCodeLens = { enabled = false },
+			
 			-- configuration = {
 			--   runtimes = {
 			--     {
