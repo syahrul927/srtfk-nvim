@@ -48,7 +48,7 @@ require("lazy").setup({
 	require("plugins.lazygit"),
 	require("plugins.comment"),
 	require("plugins.debug"),
-	require("plugins.gitsigns"),
+	-- require("plugins.gitsigns"),
 	require("plugins.database"),
 	require("plugins.misc"),
 	require("plugins.harpoon"),

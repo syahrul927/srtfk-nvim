@@ -32,15 +32,15 @@ return {
 						preview_width = 0.55, -- Adjust this value to set the preview area's width
 						prompt_position = "bottom", -- Optional: Position the prompt at the top
 					},
-					width = 0.9, -- Overall width of Telescope window
-					height = 0.9, -- Overall height of Telescope window
+					width = 0.9,            -- Overall width of Telescope window
+					height = 0.9,           -- Overall height of Telescope window
 					preview_cutoff = 120,
 				},
 				mappings = {
 					i = {
 						["<C-k>"] = actions.move_selection_previous, -- move to prev result
 						["<C-j>"] = actions.move_selection_next, -- move to next result
-						["<C-l>"] = actions.select_default, -- open file
+						["<C-l>"] = actions.select_default,    -- open file
 					},
 					n = {
 						["q"] = actions.close,
@@ -62,6 +62,35 @@ return {
 							["l"] = actions.select_default,
 						},
 					},
+				},
+				-- Multi-line display for LSP references
+				lsp_references = {
+					layout_strategy = "horizontal",
+					layout_config = {
+						vertical = {
+							width = 0.95,
+							height = 0.95,
+							preview_height = 0.6,
+							prompt_position = "bottom",
+						},
+					},
+					path_display = function(opts, path)
+						-- Custom path display for better Java file visibility
+						local tail = require("telescope.utils").path_tail(path)
+						local parent = vim.fn.fnamemodify(path, ":h:t")
+						if parent and parent ~= "." then
+							return string.format("%s/%s", parent, tail)
+						else
+							return tail
+						end
+					end,
+					show_line = false,
+					trim_text = true,
+					include_declaration = false,
+					include_current_line = false,
+					fname_width = 60,
+					results_title = "References",
+					prompt_title = "Find References",
 				},
 			},
 			live_grep = {
@@ -104,6 +133,39 @@ return {
 				symbols = { "Class", "Function", "Method", "Constructor", "Interface", "Module", "Property" },
 			})
 		end, { desc = "[S]each LSP document [S]ymbols" })
+
+		-- Custom LSP references with vertical layout for better Java file visibility
+		vim.keymap.set("n", "ghr", function()
+			builtin.lsp_references({
+				layout_strategy = "vertical",
+				layout_config = {
+					vertical = {
+						width = 0.95,
+						height = 0.95,
+						preview_height = 0.6,
+						prompt_position = "bottom",
+					},
+				},
+				path_display = function(opts, path)
+					-- Custom path display for better Java file visibility
+					local tail = require("telescope.utils").path_tail(path)
+					local parent = vim.fn.fnamemodify(path, ":h:t")
+					if parent and parent ~= "." then
+						return string.format("%s/%s", parent, tail)
+					else
+						return tail
+					end
+				end,
+				show_line = true,
+				trim_text = true,
+				include_declaration = false,
+				include_current_line = false,
+				fname_width = 60,
+				results_title = "References",
+				prompt_title = "Find References (Vertical)",
+			})
+		end, { desc = "LSP References (Vertical Layout)" })
+
 		vim.keymap.set("n", "<leader><leader>", builtin.buffers, { desc = "[ ] Find existing buffers" })
 		vim.keymap.set("n", "<leader>s/", function()
 			builtin.live_grep({
@@ -119,3 +181,4 @@ return {
 		end, { desc = "[/] Fuzzily search in current buffer" })
 	end,
 }
+
